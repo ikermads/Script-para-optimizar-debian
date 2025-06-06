@@ -1,4 +1,4 @@
-Mantenimiento 
+## Mantenimiento 
 
 El script está organizado por bloques de tareas, y cada una genera su sección correspondiente dentro del informe HTML. A continuación te explico cada bloque de forma clara:
 
