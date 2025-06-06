@@ -1,147 +1,153 @@
-## Mantenimiento 
+# 🛠️ Script de Mantenimiento y Optimización para Linux
 
-El script está organizado por bloques de tareas, y cada una genera su sección correspondiente dentro del informe HTML. A continuación te explico cada bloque de forma clara:
+Este script automatiza tareas de limpieza, mantenimiento y ajuste de rendimiento en sistemas Linux, organizadas en bloques temáticos claros y funcionales. Ideal para mantener tu equipo rápido, ordenado y eficiente.
 
-1. 🔄 Actualización del sistema
-Actualiza todos los paquetes disponibles mediante apt update y apt upgrade -y.
+---
 
-2. 🧹 Limpieza de paquetes obsoletos y kernels antiguos
-Elimina paquetes que ya no se usan (apt autoremove, apt clean) y borra kernels antiguos, dejando únicamente el que está en uso.
+## 🧼 Mantenimiento del Sistema
 
-3. 🧾 Limpieza de listas APT
-Elimina las listas de paquetes descargadas para ahorrar espacio.
+### 1. 🔄 Actualización del sistema
 
-4. 🧠 Limpieza de cachés de herramientas de desarrollo
-Limpia cachés de los siguientes entornos si están instalados:
+Actualiza todos los paquetes mediante `apt update` y `apt upgrade -y` para garantizar que el sistema esté al día.
 
-pip (Python)
+### 2. 🧹 Limpieza de paquetes obsoletos y kernels antiguos
 
-npm y yarn (Node.js)
+* Elimina dependencias no utilizadas con `apt autoremove` y `apt clean`.
+* Elimina kernels antiguos, conservando solo el actualmente en uso.
 
-composer (PHP)
+### 3. 🧾 Limpieza de listas de paquetes APT
 
-5. 🗑️ Limpieza de temporales y logs
-Elimina archivos de carpetas como /tmp, /var/tmp, limpia archivos .log muy grandes y fuerza una rotación de logs con logrotate.
+Elimina listas descargadas en `/var/lib/apt/lists/` para liberar espacio.
 
-6. 👤 Limpieza de cachés y papelera de usuarios
-Para cada usuario de /home (y también root), borra:
+### 4. 🧠 Limpieza de cachés de entornos de desarrollo
 
-Cachés de miniaturas.
+Elimina cachés de herramientas comunes si están instaladas:
 
-Archivos en la papelera.
+* `pip` (Python)
+* `npm` y `yarn` (Node.js)
+* `composer` (PHP)
 
-Archivos Snap y Flatpak no usados.
+### 5. 🗑️ Limpieza de temporales y logs
 
-7. 💽 Análisis del espacio en disco
-Muestra el uso actual del disco (df -h) y lista todos los archivos del sistema que ocupan más de 500MB, ideal para detectar ficheros olvidados.
+* Borra archivos en `/tmp`, `/var/tmp`, y logs grandes.
+* Ejecuta `logrotate` para forzar la rotación de logs del sistema.
 
-8. 🧯 Revisión de servicios
-Muestra qué servicios están corriendo y cuáles han fallado (systemctl).
+### 6. 👤 Limpieza de usuarios
 
-9. 🐳 Limpieza profunda de Docker
-Si tienes Docker instalado, el script realiza una limpieza completa:
+Para cada usuario en `/home` y `root`, elimina:
 
-Borra contenedores detenidos.
+* Cachés de miniaturas
+* Archivos de la papelera
+* Archivos obsoletos de Snap y Flatpak
 
-Borra volúmenes y redes no usadas.
+### 7. 💽 Análisis del uso del disco
 
-Borra imágenes obsoletas o "colgantes".
+* Muestra el uso de disco con `df -h`.
+* Lista archivos mayores a 500 MB en todo el sistema, facilitando su identificación y eliminación.
 
-Limpia cachés de builds.
+### 8. 🧯 Revisión de servicios
 
-Muestra el uso actual de espacio por Docker.
+Enumera servicios activos y fallidos con `systemctl`.
 
-10. 🧬 Ajustes del kernel y sistema
-Revisa y, si es necesario, ajusta el valor de swappiness a 10, que mejora el rendimiento del sistema en muchos casos. También muestra el valor actual de fs.file-max.
+### 9. 🐳 Limpieza profunda de Docker (si está instalado)
 
-11. 🔁 Fuerza una rotación de logs
-Ejecuta nuevamente logrotate para asegurarse de que todos los logs del sistema se roten correctamente.
+* Elimina contenedores detenidos, volúmenes, redes no usadas e imágenes obsoletas.
+* Limpia la caché de builds.
+* Muestra el uso de espacio por parte de Docker.
 
-12. 🔐 Verificación de servicios críticos
-Revisa si el servicio SSH está corriendo y muestra un aviso si no es así.
+### 10. 🧬 Ajustes del sistema
 
-13. ⏰ Sincronización horaria
-Habilita la sincronización horaria automática mediante timedatectl set-ntp true.
+* Ajusta `vm.swappiness` a 10 para priorizar RAM sobre swap.
+* Muestra `fs.file-max` (límite de descriptores de archivos).
 
+### 11. 🔁 Segunda rotación de logs
 
+Ejecuta nuevamente `logrotate` para garantizar la rotación de todos los archivos.
 
+### 12. 🔐 Verificación de SSH
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Optimizar rendimiento
+Verifica que el servicio `ssh` esté activo e informa si no lo está.
 
-1. 🧠 Ajustes de memoria virtual (swappiness y vfs_cache_pressure)
-Reduce el valor de vm.swappiness a 10, priorizando la RAM sobre el intercambio a disco.
+### 13. ⏰ Sincronización horaria
 
-Ajusta vm.vfs_cache_pressure a 50, equilibrando la limpieza de cachés del sistema de archivos.
+Activa la sincronización automática mediante `timedatectl set-ntp true`.
 
-2. ⚡ Establecer el modo de CPU a "performance"
-Instala cpufrequtils si no está disponible.
+---
 
-Configura todos los núcleos de CPU para que usen el gobernador "performance", priorizando la velocidad máxima constante.
+## 🚀 Optimización del Rendimiento
 
-Persiste este cambio en /etc/default/cpufrequtils.
+### 1. 🧠 Ajustes de memoria virtual
 
-3. ❌ Desactivación de servicios innecesarios
-Deshabilita y detiene los siguientes servicios si están presentes:
+* Reduce `vm.swappiness` a 10.
+* Establece `vm.vfs_cache_pressure` en 50.
 
-avahi-daemon, bluetooth, cups, postfix, ModemManager, whoopsie, rsync, apport
+### 2. ⚡ Modo CPU "performance"
 
-Reduce el consumo de recursos y el número de servicios escuchando en red.
+* Instala `cpufrequtils` si es necesario.
+* Configura todos los núcleos para usar el modo "performance".
+* Persiste la configuración en `/etc/default/cpufrequtils`.
 
-4. 🎨 Desactivación de animaciones gráficas
-Desactiva efectos visuales que consumen CPU/GPU en los entornos:
+### 3. ❌ Desactivación de servicios innecesarios
 
-GNOME
+Desactiva servicios como:
+`avahi-daemon`, `bluetooth`, `cups`, `postfix`, `ModemManager`, `whoopsie`, `rsync`, `apport`
 
-XFCE
+### 4. 🎨 Desactivación de animaciones gráficas
 
-KDE Plasma
+Reduce el consumo visual en entornos como:
+GNOME, XFCE, KDE Plasma, MATE, Cinnamon.
 
-MATE
+### 5. 🖥️ Desactivación del splash gráfico (Plymouth)
 
-Cinnamon
+* Reemplaza `quiet splash` por `text` en GRUB.
+* Aplica los cambios con `update-grub`.
 
-Esto mejora el rendimiento en equipos con pocos recursos.
+### 6. 🔐 Ajustes en gestores de pantalla
 
-5. 🖥️ Desactivación de Plymouth (splash gráfico de arranque)
-Elimina la pantalla de arranque gráfica (quiet splash) reemplazándola por modo texto (text).
+* En LightDM: oculta la lista de usuarios.
+* En SDDM: fuerza el tema `breeze`.
 
-Aplica los cambios con update-grub.
+### 7. 🧬 Ajustes adicionales del kernel
 
-6. 🔐 Ajustes en gestores de pantalla (login)
-Si se detecta LightDM, se activa la opción de ocultar lista de usuarios.
+* Aumenta `fs.inotify.max_user_watches` a `524288`.
+* Establece `fs.file-max` en `200000`.
 
-Si se detecta SDDM, se fuerza el uso del tema breeze para mayor estabilidad.
+### 8. 🐳 Limpieza básica de Docker
 
-7. 🧬 Ajustes adicionales del kernel
-Aumenta el número máximo de inotify watches a 524288 para aplicaciones que monitorean archivos (como editores de código).
+Elimina:
 
-Establece fs.file-max en 200000 para permitir más descriptores de archivos simultáneos.
+* Contenedores detenidos
+* Imágenes *dangling*
+* Volúmenes huérfanos
+* Redes no utilizadas
 
-8. 🐳 Limpieza básica de Docker
-Si Docker está instalado:
+### 9. 🧹 Limpieza temporal general
 
-Elimina contenedores detenidos.
+* Borra `/tmp`, `/var/tmp`, y cachés APT.
+* Ejecuta `apt autoclean`.
 
-Elimina imágenes dangling (sin nombre).
+### 10. 🔍 Verificación de servicios críticos
 
-Borra volúmenes huérfanos y redes no utilizadas.
+Comprueba que `ssh` esté activo y genera un log si no lo está.
 
-Esto recupera espacio y evita acumulación de residuos.
+### 11. ⏰ Sincronización horaria
 
-9. 🧹 Limpieza de archivos temporales
-Borra contenido de /tmp, /var/tmp, y cachés APT.
+Habilita `NTP` con `timedatectl set-ntp true`.
 
-Ejecuta apt autoclean para borrar paquetes ya descargados que no se pueden instalar.
+### 12. 💽 Resumen del uso de disco
 
-10. 🔍 Verificación de servicios críticos
-Comprueba si el servicio SSH está activo e informa en el log si no lo está.
+Ejecuta `df -h` para mostrar espacio disponible en los sistemas de archivos.
 
-11. ⏰ Sincronización horaria
-Activa NTP (timedatectl set-ntp true) para mantener la hora del sistema sincronizada.
+### 13. 🔁 Ejecución de mantenimiento mensual
 
-12. 💽 Resumen de uso de disco
-Ejecuta df -h para mostrar el uso actual de todos los sistemas de archivos montados.
+Si existe `/usr/local/bin/optimizar-seguro.sh` y es ejecutable, lo lanza para consolidar tareas.
 
-13. 🔁 Invoca el script mensual de mantenimiento
-Llama a /usr/local/bin/optimizar-seguro.sh si existe y es ejecutable, para integrar ambos scripts en una única rutina.
+---
+
+## ✅ Requisitos y compatibilidad
+
+Este script está diseñado para sistemas basados en Debian/Ubuntu y puede adaptarse fácilmente a otros entornos Linux. Es ideal para:
+
+* Servidores
+* Equipos de escritorio con pocos recursos
+* Máquinas virtuales
