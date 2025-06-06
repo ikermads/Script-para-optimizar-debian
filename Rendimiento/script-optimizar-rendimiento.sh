@@ -1,38 +1,3 @@
-#!/bin/bash
-#
-# /usr/local/bin/optimizar-rendimiento.sh
-# Ejecutar UNA vez como root (ej: sudo /usr/local/bin/optimizar-rendimiento.sh)
-# Genera un reporte HTML en /var/log/optimizar-rendimiento.html
-# Al final, invoca al script de mantenimiento mensual (/usr/local/bin/optimizar-seguro.sh).
-
-OUTPUT="/var/log/optimizar-rendimiento.html"
-DATE=$(date '+%Y-%m-%d %H:%M:%S')
-
-# Iniciar el HTML de rendimiento
-cat <<EOF > "$OUTPUT"
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Informe de Optimización de Rendimiento - $DATE</title>
-  <style>
-    body { font-family: monospace; background: #f4f4f4; padding: 20px; }
-    h1, h2 { color: #444; margin-top: 1em; }
-    pre { background: #fff; border: 1px solid #ccc; padding: 10px; overflow-x: auto; }
-  </style>
-</head>
-<body>
-<h1>Optimización de Rendimiento de Debian</h1>
-<p><strong>Fecha de ejecución:</strong> $DATE</p>
-EOF
-
-# Detectar usuario real (para ajustes de entorno gráfico)
-if [ -n "$SUDO_USER" ] && [ "$SUDO_USER" != "root" ]; then
-  REAL_USER="$SUDO_USER"
-else
-  REAL_USER="root"
-fi
-
 ## 1. Ajustar vm.swappiness y vm.vfs_cache_pressure
 echo "<h2>1. Ajuste de parámetros de memoria virtual</h2><pre>" >> "$OUTPUT"
 echo "- swappiness actual: $(sysctl -n vm.swappiness)" >> "$OUTPUT"
@@ -238,8 +203,3 @@ fi
 
 # Cierre del HTML
 echo "</body></html>" >> "$OUTPUT"
-
-
-
-
-
